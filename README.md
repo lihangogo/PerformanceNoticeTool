@@ -1,0 +1,2 @@
+# PerformanceNoticeTool
+研究生教务系统出成绩通知的小工具
