@@ -120,7 +120,7 @@ def parse_page(html):
                         + '</td>.*?<td align="center">(.*?)</td>.*?'
                         + '<td align="center">(.*?)</td>.*?<td align="center">(.*?)</td>.*?<td align="center">(.*?)</td>'
                         + '.*?<td align="center">(.*?)</td>.*?<td align="center">(.*?)</td>.*?</tr>', re.S)
-    items = re.findall(pattern, html)
+    items = re.findall(pattern, str(html))
     for item in items:
         score_temp = score(item[0], item[1], item[3], item[5].strip(), item[6].strip())
         yield score_temp
@@ -141,21 +141,22 @@ def post_processing():
     global pre_score_num, pre_score_num, new_content, post_scores, pre_scores
     new_content.clear()
     post_score_num = len(post_scores)
-    if pre_score_num is not post_score_num:
-        new_content = [item.detail() for item in post_scores if item not in pre_scores]
-        pre_scores = post_scores.copy()
-        pre_score_num = post_score_num
-        post_scores.clear()
-        post_score_num = 0 
-        content = reduce(lambda x, y: x + y + '   ', new_content)
-        email_address = '18653059888@163.com'
-        mail_sender = Mail('smtp.163.com', email_address, '*******', email_address, [email_address],  # 隐去邮箱密码
-            content, email_address, email_address, '期末考试成绩推送')
-        mail_sender.send_mail()
+    if post_score_num is not 0:
+        if pre_score_num is not post_score_num:
+            new_content = [item.detail() for item in post_scores if item not in pre_scores]
+            pre_scores = post_scores.copy()
+            pre_score_num = post_score_num
+            post_scores.clear()
+            post_score_num = 0 
+            content = reduce(lambda x, y: x + y + '   ', new_content)
+            email_address = '18653059888@163.com'
+            mail_sender = Mail('smtp.163.com', email_address, '********', email_address, [email_address], 
+                content, email_address, email_address, '期末考试成绩推送')
+            mail_sender.send_mail()
 
-    else:
-        post_scores.clear()
-        post_score_num = 0 
+        else:
+            post_scores.clear()
+            post_score_num = 0 
 
 
 # 拿数据
